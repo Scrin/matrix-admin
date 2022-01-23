@@ -1,4 +1,4 @@
-import { useQuery } from "react-query"
+import { useInfiniteQuery, useQuery } from "react-query"
 import uri from "uri-tag"
 import { useApiClient } from "../context/ApiClientContext"
 
@@ -25,6 +25,7 @@ export const useBackgroundUpdates = () => {
 export interface RoomList {
   rooms: Room[]
   offset: number
+  next_token?: number
   total_rooms: number
 }
 
@@ -59,21 +60,22 @@ export type RoomListSort =
   | "history_visibility"
   | "state_events"
 
-export const useRoomList = (sort: RoomListSort, limit = 100, reverse = false) => {
+export const useRoomList = (sort: RoomListSort, reverse = false) => {
   const apiClient = useApiClient()
-  return useQuery(
-    ["synapse-room-list", sort, limit, reverse],
-    () => apiClient.get<RoomList>(uri`/_synapse/admin/v1/rooms?order_by=${sort}&limit=${limit}&dir=${reverse ? "b" : "f"}`),
+  return useInfiniteQuery(
+    ["synapse-room-list", sort, reverse],
+    () => apiClient.get<RoomList>(uri`/_synapse/admin/v1/rooms?order_by=${sort}&limit=100&dir=${reverse ? "b" : "f"}`),
     {
       enabled: apiClient.configured,
       staleTime: 60000,
+      getNextPageParam: lastPage => lastPage.next_token,
     }
   )
 }
 
 export interface UserList {
   users: User[]
-  next_token: number
+  next_token?: number
   total: number
 }
 
@@ -91,14 +93,15 @@ export interface User {
 
 export type UserListSort = "name" | "is_guest" | "admin" | "user_type" | "deactivated" | "shadow_banned" | "displayname" | "avatar_url" | "creation_ts"
 
-export const useUserList = (sort: UserListSort, limit = 100, reverse = false) => {
+export const useUserList = (sort: UserListSort, reverse = false) => {
   const apiClient = useApiClient()
-  return useQuery(
-    ["synapse-user-list", sort, limit, reverse],
-    () => apiClient.get<UserList>(uri`/_synapse/admin/v2/users?order_by=${sort}&limit=${limit}&dir=${reverse ? "b" : "f"}`),
+  return useInfiniteQuery(
+    ["synapse-user-list", sort, reverse],
+    ({ pageParam = 0 }) => apiClient.get<UserList>(uri`/_synapse/admin/v2/users?order_by=${sort}&from=${pageParam}&limit=100&dir=${reverse ? "b" : "f"}`),
     {
       enabled: apiClient.configured,
       staleTime: 60000,
+      getNextPageParam: lastPage => lastPage.next_token,
     }
   )
 }
@@ -106,6 +109,7 @@ export const useUserList = (sort: UserListSort, limit = 100, reverse = false) =>
 export interface FederationDestinations {
   destinations: FederationDestination[]
   total: number
+  next_token: number
 }
 
 export interface FederationDestination {
@@ -118,14 +122,18 @@ export interface FederationDestination {
 
 export type FederationDestinationSort = "destination" | "retry_last_ts" | "retry_interval" | "failure_ts" | "last_successful_stream_ordering"
 
-export const useFederationDestinations = (sort: FederationDestinationSort, limit = 100, reverse = false) => {
+export const useFederationDestinations = (sort: FederationDestinationSort, reverse = false) => {
   const apiClient = useApiClient()
-  return useQuery(
-    ["synapse-federation-destinations", sort, limit, reverse],
-    () => apiClient.get<FederationDestinations>(uri`/_synapse/admin/v1/federation/destinations?order_by=${sort}&limit=${limit}&dir=${reverse ? "b" : "f"}`),
+  return useInfiniteQuery(
+    ["synapse-federation-destinations", sort, reverse],
+    ({ pageParam = 0 }) =>
+      apiClient.get<FederationDestinations>(
+        uri`/_synapse/admin/v1/federation/destinations?order_by=${sort}&from=${pageParam}&limit=100&dir=${reverse ? "b" : "f"}`
+      ),
     {
       enabled: apiClient.configured,
       staleTime: 60000,
+      getNextPageParam: lastPage => lastPage.next_token,
     }
   )
 }
@@ -182,6 +190,74 @@ export const useUserDevices = (userId: string) => {
   const apiClient = useApiClient()
   return useQuery(["synapse-user-devices", userId], () => apiClient.get<UserDevices>(uri`/_synapse/admin/v2/users/${userId}/devices`), {
     enabled: apiClient.configured && userId !== "",
+    staleTime: 60000,
+  })
+}
+
+export interface UserSessions {
+  user_id: string
+  devices: {
+    "": {
+      sessions: UserSession[]
+    }
+  }
+}
+
+export interface UserSession {
+  connections: UserSessionConnection[]
+}
+
+export interface UserSessionConnection {
+  ip: string
+  last_seen: number
+  user_agent: string
+}
+
+export const useUserSessions = (userId: string) => {
+  const apiClient = useApiClient()
+  return useQuery(["synapse-user-sessions", userId], () => apiClient.get<UserSessions>(uri`/_synapse/admin/v1/whois/${userId}`), {
+    enabled: apiClient.configured && userId !== "",
+    staleTime: 60000,
+  })
+}
+
+export interface RoomDetails {
+  room_id: string
+  name: string
+  avatar: string
+  topic: string
+  canonical_alias: string
+  joined_members: number
+  joined_local_members: number
+  joined_local_devices: number
+  version: string
+  creator: string
+  encryption: string
+  federatable: boolean
+  public: boolean
+  join_rules: string
+  guest_access: string
+  history_visibility: string
+  state_events: number
+}
+
+export const useRoomDetails = (roomId: string) => {
+  const apiClient = useApiClient()
+  return useQuery(["synapse-room-details", roomId], () => apiClient.get<RoomDetails>(uri`/_synapse/admin/v1/rooms/${roomId}`), {
+    enabled: apiClient.configured && roomId !== "",
+    staleTime: 60000,
+  })
+}
+
+export interface RoomMembers {
+  members: string[]
+  total: number
+}
+
+export const useRoomMembers = (roomId: string) => {
+  const apiClient = useApiClient()
+  return useQuery(["synapse-room-members", roomId], () => apiClient.get<RoomMembers>(uri`/_synapse/admin/v1/rooms/${roomId}/members`), {
+    enabled: apiClient.configured && roomId !== "",
     staleTime: 60000,
   })
 }

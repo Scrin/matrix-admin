@@ -20,32 +20,32 @@ export const formatBytes = (bytes?: number | null): string => {
 
 export const formatTS = (ts?: number | null): string => {
   if (ts === undefined || ts === null) return ""
-  return new Date(ts).toISOString()
+  return new Date(ts).toISOString().replace(/T/, " ").replace(/\..*/, "")
 }
 
-export const formatDuration = (durationMs?: number | null): string => {
+export const formatDuration = (durationMs?: number | null, maxParts = 3): string => {
   if (durationMs === undefined || durationMs === null) return ""
-  let result = ""
+  const parts = []
   const days = Math.floor(durationMs / (24 * 60 * 60 * 1000))
   if (days > 0) {
-    result += `${days}d `
+    parts.push(`${days}d`)
     durationMs -= days * 24 * 60 * 60 * 1000
   }
   const hours = Math.floor(durationMs / (60 * 60 * 1000))
   if (hours > 0) {
-    result += `${hours}h `
+    parts.push(`${hours}h`)
     durationMs -= hours * 60 * 60 * 1000
   }
   const minutes = Math.floor(durationMs / (60 * 1000))
   if (minutes > 0) {
-    result += `${minutes}m `
+    parts.push(`${minutes}m`)
     durationMs -= minutes * 60 * 1000
   }
   const seconds = Math.floor(durationMs / 1000)
   if (seconds > 0) {
-    result += `${seconds}s `
+    parts.push(`${seconds}s`)
     durationMs -= seconds * 1000
   }
-  result += `${durationMs} ms`
-  return result
+  parts.push(`${durationMs} ms`)
+  return parts.slice(0, maxParts).join(" ")
 }

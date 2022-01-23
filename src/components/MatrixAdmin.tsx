@@ -1,9 +1,18 @@
-import { AppBar, Box, Container, Grid, Tab, Tabs, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Container, Fab, Grid, LinearProgress, Tab, Tabs, Toolbar, Typography } from "@mui/material"
 import { useState } from "react"
 import { useConnectionParams } from "../context/ConnectionParamsContext"
-import { Connect } from "./Connect"
-import { Mediarepo } from "./mediarepo/Mediarepo"
-import { Synapse } from "./synapse/Synapse"
+import { Connect } from "./misc/Connect"
+import { Rooms } from "./pages/Rooms"
+import { Overview } from "./pages/Overview"
+import { Users } from "./pages/Users"
+import { useIsFetching, useQueryClient } from "react-query"
+import RefreshIcon from "@mui/icons-material/Refresh"
+
+const pages = [
+  { name: "Overview", Component: Overview },
+  { name: "Users", Component: Users },
+  { name: "Rooms", Component: Rooms },
+]
 
 export const MatrixAdmin = () => {
   const connectionParams = useConnectionParams()
@@ -36,20 +45,38 @@ export const MatrixAdmin = () => {
               </Grid>
             ) : (
               <>
+                <Loader />
                 <Grid item xs={12}>
                   <Tabs value={tab} centered onChange={(_, v: number) => setTab(v)}>
-                    <Tab label="Synapse" />
-                    <Tab label="Mediarepo" />
+                    {pages.map(page => (
+                      <Tab key={page.name} label={page.name} />
+                    ))}
                   </Tabs>
                 </Grid>
-                {tab === 0 && <Synapse />}
-                {tab === 1 && <Mediarepo />}
+                {pages.map(({ name, Component }, i) => tab === i && <Component key={name} />)}
               </>
             )}
           </Grid>
         </Container>
       </Box>
     </>
+  )
+}
+
+const Loader = () => {
+  const queryClient = useQueryClient()
+  const isFetching = useIsFetching()
+  if (isFetching)
+    return (
+      <Box sx={{ position: "absolute" }}>
+        <LinearProgress />
+        <Typography color="gray">Updating data...</Typography>
+      </Box>
+    )
+  return (
+    <Fab size="small" color="primary" sx={{ m: 2, position: "absolute", zIndex: 1 }} onClick={() => queryClient.invalidateQueries()}>
+      <RefreshIcon />
+    </Fab>
   )
 }
 

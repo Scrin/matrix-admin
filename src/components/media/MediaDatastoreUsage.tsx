@@ -1,21 +1,14 @@
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
+import { Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
 import { useConnectionParams } from "../../context/ConnectionParamsContext"
-import { MediarepoDatastore, useMediarepoDatastoreSize, useMediarepoDatastores } from "../../hooks/mediarepoHooks"
+import { useMediarepoDatastores, MediarepoDatastore, useMediarepoDatastoreSize } from "../../hooks/mediarepoHooks"
 import { formatBytes } from "../../utils"
 
-export const DatastoreInfo = () => {
+export const MediaDatastoreUsage = () => {
   const connectionParams = useConnectionParams()
   const mediarepoDatastores = useMediarepoDatastores()
-
   return (
-    <Paper
-      sx={{
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Typography component="h1" variant="h4" sx={{ p: 2 }}>
+    <>
+      <Typography component="h1" variant="h6" sx={{ p: 2 }}>
         Datastores
       </Typography>
       {connectionParams && !connectionParams.mediarepoVersion ? (
@@ -28,7 +21,7 @@ export const DatastoreInfo = () => {
             Object.keys(mediarepoDatastores.data).map(id => <DatastoreSize key={id} id={id} info={mediarepoDatastores.data[id]} />)}
         </>
       )}
-    </Paper>
+    </>
   )
 }
 

@@ -1,6 +1,7 @@
 import { Alert, Button, Checkbox, FormControlLabel, Paper, TextField, Tooltip } from "@mui/material"
 import { useEffect, useState } from "react"
-import { ConnectionParams, useConnectionParams, useSetConnectionParams } from "../context/ConnectionParamsContext"
+import { ConnectionParams, useConnectionParams, useSetConnectionParams } from "../../context/ConnectionParamsContext"
+import { useUpdateUIState } from "../../context/UIStateContext"
 
 const tryConnect = async (server: string, token: string): Promise<ConnectionParams> => {
   const version = await fetch(`${server}/_matrix/federation/v1/version`)
@@ -34,7 +35,7 @@ const tryConnect = async (server: string, token: string): Promise<ConnectionPara
 
   const mediarepo = await fetch(`${server}/_matrix/media/version`, { headers: { Authorization: `Bearer ${token}` } })
     .then(r => r.json())
-    .then((mediarepoResponse: { Version?: string }) => ({ mediarepoVersion: mediarepoResponse.Version }))
+    .then((r: { Version?: string }) => ({ mediarepoVersion: r.Version }))
     .catch(() => ({ mediarepoVersion: undefined }))
 
   return { server, token, ...version, ...whoami, ...mediarepo }
@@ -48,6 +49,7 @@ export const Connect = () => {
   const [token, setToken] = useState(connectionParams?.token || localStorage.getItem("token") || "")
   const [remember, setRemember] = useState(localStorage.getItem("server") !== null)
   const [error, setError] = useState<string | null>(null)
+  const updateUIState = useUpdateUIState()
 
   useEffect(() => {
     if (remember) {
@@ -72,6 +74,7 @@ export const Connect = () => {
       .then(params => {
         setConnecting(false)
         setConnectionParams({ ...params, server, token })
+        updateUIState({ userID: params.userID })
         if (remember) {
           localStorage.setItem("server", server)
           localStorage.setItem("token", token)

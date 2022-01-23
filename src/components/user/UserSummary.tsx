@@ -3,15 +3,15 @@ import { useUserList } from "../../hooks/synapseHooks"
 import { formatTS } from "../../utils"
 
 export const UserSummary = () => {
-  const roomList = useUserList("admin", 100, true)
+  const userList = useUserList("admin", true)
   return (
     <>
       <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-        Admin users {roomList.isSuccess && `(${roomList.data.total} total users)`}
+        Admin users {userList.isSuccess && `(${userList.data.pages[0].total} total users)`}
       </Typography>
-      {roomList.isLoading && <Typography>Loading rooms</Typography>}
-      {roomList.isError && <Typography>Failed to load rooms</Typography>}
-      {roomList.isSuccess && (
+      {userList.isLoading && <Typography>Loading admin users</Typography>}
+      {userList.isError && <Typography>Failed to load admin users</Typography>}
+      {userList.isSuccess && (
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -21,7 +21,7 @@ export const UserSummary = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {roomList.data.users
+            {userList.data.pages[0].users
               .filter(u => u.admin === 1)
               .map(user => (
                 <TableRow key={user.name}>

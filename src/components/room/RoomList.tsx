@@ -1,12 +1,21 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import { useRoomList } from "../../hooks/synapseHooks"
+import useInView from "react-cool-inview"
+import { useUpdateUIState } from "../../context/UIStateContext"
 
-export const TopRooms = () => {
-  const roomList = useRoomList("joined_members", 20)
+export const RoomList = () => {
+  const roomList = useRoomList("name")
+  const updateUIState = useUpdateUIState()
+
+  const { observe } = useInView({
+    rootMargin: "500px 0px",
+    onEnter: () => void roomList.fetchNextPage(),
+  })
+
   return (
     <>
       <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-        Top 20 largest rooms {roomList.isSuccess && `(out of ${roomList.data.total_rooms} known rooms)`}
+        Rooms
       </Typography>
       {roomList.isLoading && <Typography>Loading rooms</Typography>}
       {roomList.isError && <Typography>Failed to load rooms</Typography>}
@@ -15,25 +24,26 @@ export const TopRooms = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Alias</TableCell>
+              <TableCell>Internal ID</TableCell>
               <TableCell>Members</TableCell>
               <TableCell>Local members</TableCell>
-              <TableCell>State events</TableCell>
+              <TableCell>Encrypted</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {roomList.data.rooms.map(room => (
-              <TableRow key={room.room_id}>
+            {roomList.data.pages[0].rooms.map(room => (
+              <TableRow key={room.room_id} hover sx={{ cursor: "pointer" }} onClick={() => updateUIState({ roomID: room.room_id })}>
                 <TableCell>{room.name}</TableCell>
-                <TableCell>{room.canonical_alias}</TableCell>
+                <TableCell>{room.room_id}</TableCell>
                 <TableCell>{room.joined_members}</TableCell>
                 <TableCell>{room.joined_local_members}</TableCell>
-                <TableCell>{room.state_events}</TableCell>
+                <TableCell>{room.encryption ? "Yes" : "No"}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
+      <div ref={observe}></div>
     </>
   )
 }

@@ -1,29 +1,8 @@
-import { Divider, Paper, Typography } from "@mui/material"
-import { useBackgroundUpdates, useFederationDestinations } from "../../hooks/synapseHooks"
-import { UserSearch } from "./UserSearch"
+import { Typography } from "@mui/material"
+import { useBackgroundUpdates } from "../../hooks/synapseHooks"
 
-export const SynapseManager = () => {
-  return (
-    <Paper
-      sx={{
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Typography component="h1" variant="h4" sx={{ p: 2 }}>
-        Synapse
-      </Typography>
-      <BackgroundUpdates />
-      <Divider light />
-      <UserSearch />
-    </Paper>
-  )
-}
-
-const BackgroundUpdates = () => {
+export const BackgroundUpdates = () => {
   const backgroundUpdates = useBackgroundUpdates()
-  const roomList = useFederationDestinations("destination", 0)
   const updateDbNames = Object.keys(backgroundUpdates.data?.current_updates || {})
   return (
     <>
@@ -31,9 +10,6 @@ const BackgroundUpdates = () => {
       {backgroundUpdates.isError && <Typography>Failed to load background updates</Typography>}
       {backgroundUpdates.isSuccess && (
         <>
-          {roomList.isLoading && <Typography>Loading federation details...</Typography>}
-          {roomList.isError && <Typography>Failed to load federation details</Typography>}
-          {roomList.isSuccess && <Typography>{roomList.data.total} known federation destinations</Typography>}
           <Typography>Background updates {backgroundUpdates.data.enabled ? "enabled" : "disabled"}</Typography>
           {updateDbNames?.map(dbName => {
             const update = backgroundUpdates.data.current_updates[dbName]
