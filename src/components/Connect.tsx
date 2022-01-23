@@ -62,6 +62,10 @@ export const Connect = () => {
   }, [remember, connectionParams])
 
   const connect = () => {
+    if (!/https?:\/\/.+/.test(server)) {
+      setError("Server URL should begin with http:// or https://")
+      return
+    }
     setConnecting(true)
     setError(null)
     tryConnect(server, token)
@@ -93,23 +97,28 @@ export const Connect = () => {
           "& > :not(style)": { m: 1 },
         }}
       >
-        <TextField
-          label="Homeserver URL"
-          variant="standard"
-          sx={{ width: "30ch" }}
-          value={server}
-          onChange={e => setServer(e.target.value)}
-          disabled={connecting}
-        />
-        <TextField
-          label="Token"
-          variant="standard"
-          type="password"
-          sx={{ flexGrow: 1 }}
-          value={token}
-          onChange={e => setToken(e.target.value)}
-          disabled={connecting}
-        />
+        <Tooltip title='Full URL to the homeserver, including scheme (the server address, not the "server name")'>
+          <TextField
+            label="Homeserver URL"
+            placeholder="https://matrix.example.com"
+            variant="standard"
+            sx={{ width: "30ch" }}
+            value={server}
+            onChange={e => setServer(e.target.value)}
+            disabled={connecting}
+          />
+        </Tooltip>
+        <Tooltip title="In Element this can be found in Settings -> Help & About -> Advanced -> Access Token">
+          <TextField
+            label="Access token"
+            variant="standard"
+            type="password"
+            sx={{ flexGrow: 1 }}
+            value={token}
+            onChange={e => setToken(e.target.value)}
+            disabled={connecting}
+          />
+        </Tooltip>
         {connectionParams ? (
           <Button variant="contained" onClick={disconnect}>
             Disconnect
