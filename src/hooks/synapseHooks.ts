@@ -261,3 +261,16 @@ export const useRoomMembers = (roomId: string) => {
     staleTime: 60000,
   })
 }
+
+export interface RoomMembership {
+  joined_rooms: string[]
+  total: number
+}
+
+export const useRoomMembership = (userId: string) => {
+  const apiClient = useApiClient()
+  return useQuery(["synapse-room-membership", userId], () => apiClient.get<RoomMembership>(uri`/_synapse/admin/v1/users/${userId}/joined_rooms`), {
+    enabled: apiClient.configured && userId !== "",
+    staleTime: 60000,
+  })
+}

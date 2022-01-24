@@ -4,6 +4,7 @@ export interface ConnectionParams {
   server: string
   token: string
   userID: string
+  serverName: string
   serverVersion: string
   mediarepoVersion?: string
 }

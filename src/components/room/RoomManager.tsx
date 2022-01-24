@@ -11,6 +11,7 @@ export const RoomManager = () => {
     <>
       <TextField label="Room ID" variant="standard" value={roomID} onChange={e => updateUIState({ roomID: e.target.value })} />
       <RoomDetails roomID={roomID} />
+      <RoomMembers roomID={roomID} localOnly />
       <RoomMembers roomID={roomID} />
     </>
   )

@@ -18,7 +18,7 @@ const tryConnect = async (server: string, token: string): Promise<ConnectionPara
     .then(r => r.json())
     .then((r: { user_id: string }) => {
       if (!r?.user_id) throw new Error()
-      return { userID: r.user_id }
+      return { userID: r.user_id, serverName: r.user_id.split(":")[1] }
     })
     .catch(() => {
       throw new Error("Token not valid")

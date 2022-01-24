@@ -3,6 +3,7 @@ import { useUIState, useUpdateUIState } from "../../context/UIStateContext"
 import { MediaUserUsage } from "../media/MediaUserUsage"
 import { UserDetails } from "./UserDetails"
 import { UserDevices } from "./UserDevices"
+import { UserRoomMembership } from "./UserRoomMembership"
 import { UserSessions } from "./UserSessions"
 
 export const UserManager = () => {
@@ -14,6 +15,7 @@ export const UserManager = () => {
       <TextField label="User ID" variant="standard" value={userID} onChange={e => updateUIState({ userID: e.target.value })} />
       <UserDetails userID={userID} />
       <MediaUserUsage userID={userID} />
+      <UserRoomMembership userID={userID} />
       <UserDevices userID={userID} />
       <UserSessions userID={userID} />
     </>

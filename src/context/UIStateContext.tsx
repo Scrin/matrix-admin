@@ -3,11 +3,13 @@ import { FC, useState, createContext, useContext } from "react"
 export interface UIState {
   userID: string
   roomID: string
+  tabIndex: number
 }
 
 const initialState: UIState = {
   userID: "",
   roomID: "",
+  tabIndex: 0,
 }
 
 const UIStateContext = createContext<UIState>(initialState)
