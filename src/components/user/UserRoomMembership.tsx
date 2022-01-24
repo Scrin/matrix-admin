@@ -1,4 +1,5 @@
 import { Typography, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
+import { Box } from "@mui/system"
 import { MouseEventHandler } from "react"
 import { useUpdateUIState } from "../../context/UIStateContext"
 import { useRoomMembership, useRoomDetails } from "../../hooks/synapseHooks"
@@ -15,22 +16,24 @@ export const UserRoomMembership = ({ userID }: { userID: string }) => {
       <Typography component="h1" variant="h6" sx={{ p: 2 }}>
         Room memberships
       </Typography>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Internal ID</TableCell>
-            <TableCell>Members</TableCell>
-            <TableCell>Local members</TableCell>
-            <TableCell>Encrypted</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {roomMembership.data?.joined_rooms?.map(roomID => (
-            <RoomEntry key={roomID} roomID={roomID} onClick={onClick(roomID)} />
-          ))}
-        </TableBody>
-      </Table>
+      <Box sx={{ overflow: "auto", maxHeight: "500px" }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Internal ID</TableCell>
+              <TableCell>Members</TableCell>
+              <TableCell>Local members</TableCell>
+              <TableCell>Encrypted</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {roomMembership.data?.joined_rooms?.map(roomID => (
+              <RoomEntry key={roomID} roomID={roomID} onClick={onClick(roomID)} />
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
     </>
   )
 }
