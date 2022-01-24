@@ -1,15 +1,6 @@
 import { Grid, List, ListItem, ListItemText } from "@mui/material"
 import { useRoomDetails } from "../../hooks/synapseHooks"
-
-const mapBool = (n?: number | boolean | null) => {
-  if (n === undefined) return "\u00A0"
-  else if (n === null) return "No"
-  else if (n === true) return "Yes"
-  else if (n === false) return "No"
-  else if (n === 1) return "Yes"
-  else if (n === 0) return "No"
-  else return "Unknown"
-}
+import { mapBool } from "../../utils"
 
 export const RoomDetails = ({ roomID }: { roomID: string }) => {
   const roomDetails = useRoomDetails(roomID)

@@ -1,12 +1,12 @@
-import { AppBar, Box, Container, Fab, Grid, LinearProgress, Tab, Tabs, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Container, Grid, Tab, Tabs, Toolbar, Typography } from "@mui/material"
 import { useState } from "react"
 import { useConnectionParams } from "../context/ConnectionParamsContext"
 import { Connect } from "./misc/Connect"
 import { Rooms } from "./pages/Rooms"
 import { Overview } from "./pages/Overview"
 import { Users } from "./pages/Users"
-import { useIsFetching, useQueryClient } from "react-query"
-import RefreshIcon from "@mui/icons-material/Refresh"
+import { Loader } from "./misc/Loader"
+import { ServerInfo } from "./misc/ServerInfo"
 
 const pages = [
   { name: "Overview", Component: Overview },
@@ -59,47 +59,6 @@ export const MatrixAdmin = () => {
           </Grid>
         </Container>
       </Box>
-    </>
-  )
-}
-
-const Loader = () => {
-  const queryClient = useQueryClient()
-  const isFetching = useIsFetching()
-  if (isFetching)
-    return (
-      <Box sx={{ position: "absolute" }}>
-        <LinearProgress />
-        <Typography color="gray">Updating data...</Typography>
-      </Box>
-    )
-  return (
-    <Fab size="small" color="primary" sx={{ m: 2, position: "absolute", zIndex: 1 }} onClick={() => queryClient.invalidateQueries()}>
-      <RefreshIcon />
-    </Fab>
-  )
-}
-
-const ServerInfo = () => {
-  const connectionParams = useConnectionParams()
-
-  if (!connectionParams) return null
-  return (
-    <>
-      <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-        {connectionParams.server}
-      </Typography>
-      <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-        {connectionParams.serverVersion}
-      </Typography>
-      {connectionParams.mediarepoVersion && (
-        <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-          Mediarepo {connectionParams.mediarepoVersion}
-        </Typography>
-      )}
-      <Typography component="h1" variant="h6" sx={{ p: 2 }}>
-        User {connectionParams.userID}
-      </Typography>
     </>
   )
 }

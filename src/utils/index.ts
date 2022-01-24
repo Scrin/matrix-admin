@@ -49,3 +49,13 @@ export const formatDuration = (durationMs?: number | null, maxParts = 3): string
   parts.push(`${durationMs} ms`)
   return parts.slice(0, maxParts).join(" ")
 }
+
+export const mapBool = (n?: number | boolean | null) => {
+  if (n === undefined) return "\u00A0"
+  else if (n === null) return "No"
+  else if (n === true) return "Yes"
+  else if (n === false) return "No"
+  else if (n === 1) return "Yes"
+  else if (n === 0) return "No"
+  else return "Unknown"
+}

@@ -1,14 +1,6 @@
 import { Grid, List, ListItem, ListItemText } from "@mui/material"
 import { useUserDetails } from "../../hooks/synapseHooks"
-import { formatTS } from "../../utils"
-
-const mapNumericBool = (n?: number | null) => {
-  if (n === undefined) return "\u00A0"
-  else if (n === 1) return "Yes"
-  else if (n === 0) return "No"
-  else if (n === null) return "No"
-  else return "Unknown"
-}
+import { formatTS, mapBool } from "../../utils"
 
 export const UserDetails = ({ userID }: { userID: string }) => {
   const userDetails = useUserDetails(userID)
@@ -36,16 +28,16 @@ export const UserDetails = ({ userID }: { userID: string }) => {
       <Grid item md={12} lg={4}>
         <List sx={{ width: "100%", bgcolor: "background.paper" }}>
           <ListItem>
-            <ListItemText primary="Admin" secondary={mapNumericBool(userDetails.data?.admin)} />
+            <ListItemText primary="Admin" secondary={mapBool(userDetails.data?.admin)} />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Deactivated" secondary={mapNumericBool(userDetails.data?.deactivated)} />
+            <ListItemText primary="Deactivated" secondary={mapBool(userDetails.data?.deactivated)} />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Shadow banned" secondary={mapNumericBool(userDetails.data?.shadow_banned)} />
+            <ListItemText primary="Shadow banned" secondary={mapBool(userDetails.data?.shadow_banned)} />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Guest" secondary={mapNumericBool(userDetails.data?.is_guest)} />
+            <ListItemText primary="Guest" secondary={mapBool(userDetails.data?.is_guest)} />
           </ListItem>
         </List>
       </Grid>
