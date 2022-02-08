@@ -8,7 +8,7 @@
   "schedule": ["after 4pm every weekday", "every weekend"],
   "packageRules": [
     {
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": ["minor","patch"],
       "schedule": ["after 4pm and before 6pm on friday"],
       "groupName": "patches"
     }
