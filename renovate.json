@@ -10,7 +10,7 @@
     {
       "matchUpdateTypes": ["minor","patch"],
       "schedule": ["after 4pm and before 6pm on friday"],
-      "groupName": "patches"
+      "groupName": "deps (weekly minor & patch)"
     }
   ]
 }
