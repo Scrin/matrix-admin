@@ -1,4 +1,5 @@
-import { Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
+import { Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material"
+import { useState } from "react"
 import { useConnectionParams } from "../../context/ConnectionParamsContext"
 import { useMediarepoDatastores, MediarepoDatastore, useMediarepoDatastoreSize } from "../../hooks/mediarepoHooks"
 import { formatBytes } from "../../utils"
@@ -6,6 +7,7 @@ import { formatBytes } from "../../utils"
 export const MediaDatastoreUsage = () => {
   const connectionParams = useConnectionParams()
   const mediarepoDatastores = useMediarepoDatastores()
+  const [showEmpty, setShowEmpty] = useState(false)
   return (
     <>
       <Typography component="h1" variant="h6" sx={{ p: 2 }}>
@@ -17,19 +19,35 @@ export const MediaDatastoreUsage = () => {
         <>
           {mediarepoDatastores.isLoading && <Typography>Loading...</Typography>}
           {mediarepoDatastores.isError && <Typography>Error loading datastores from mediarepo</Typography>}
-          {mediarepoDatastores.isSuccess &&
-            Object.keys(mediarepoDatastores.data).map(id => <DatastoreSize key={id} id={id} info={mediarepoDatastores.data[id]} />)}
+          {mediarepoDatastores.isSuccess && (
+            <>
+              <FormControlLabel label="Show empty datastores" control={<Checkbox checked={showEmpty} onChange={e => setShowEmpty(e.target.checked)} />} />
+              {Object.keys(mediarepoDatastores.data).map(id => (
+                <DatastoreSize key={id} id={id} info={mediarepoDatastores.data[id]} showEmpty={showEmpty} />
+              ))}
+            </>
+          )}
         </>
       )}
     </>
   )
 }
 
-const DatastoreSize = ({ id, info }: { id: string; info: MediarepoDatastore }) => {
+interface DatastoreSizeProps {
+  id: string
+  info: MediarepoDatastore
+  showEmpty: boolean
+}
+
+const DatastoreSize = ({ id, info, showEmpty }: DatastoreSizeProps) => {
   const datastore = useMediarepoDatastoreSize(id)
+
+  if (datastore.isSuccess && !showEmpty && datastore.data.total_bytes === 0) return null
+
   return (
     <Paper sx={{ p: 1, m: 1 }}>
-      <Typography>{`Datastore type: ${info.type}, uri: ${info.uri}, ID: ${id}`}</Typography>
+      <Typography>{`Datastore ${info.type} uri: ${info.uri}`}</Typography>
+      <Typography>{`Datastore ID: ${id}`}</Typography>
       {datastore.isLoading && <Typography>Loading datastore size...</Typography>}
       {datastore.isError && <Typography>Error loading datastore size</Typography>}
       {datastore.isSuccess && (
