@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import { useUserList } from "../../hooks/synapseHooks"
 import { formatTS } from "../../utils"
-import useInView from "react-cool-inview"
+import { useInView } from "react-cool-inview"
 import { useUpdateUIState } from "../../context/UIStateContext"
 
 export const UserList = () => {

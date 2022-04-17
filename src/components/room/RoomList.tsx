@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import { useRoomList } from "../../hooks/synapseHooks"
-import useInView from "react-cool-inview"
+import { useInView } from "react-cool-inview"
 import { useUpdateUIState } from "../../context/UIStateContext"
 
 export const RoomList = () => {
