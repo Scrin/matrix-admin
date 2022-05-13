@@ -1,4 +1,4 @@
-import { FC, createContext, useContext } from "react"
+import { FC, createContext, useContext, ReactElement } from "react"
 import { useConnectionParams } from "./ConnectionParamsContext"
 
 export interface ApiClient {
@@ -17,7 +17,7 @@ const ApiClientContext = createContext<ApiClient>(dummyClient)
 
 export const useApiClient = () => useContext(ApiClientContext)
 
-export const ApiClientProvider: FC = ({ children }) => {
+export const ApiClientProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const connectionParams = useConnectionParams()
 
   const apiClient: ApiClient = !connectionParams

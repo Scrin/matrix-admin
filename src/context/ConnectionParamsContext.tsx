@@ -1,4 +1,4 @@
-import { FC, useState, createContext, useContext } from "react"
+import { FC, useState, createContext, useContext, ReactElement } from "react"
 
 export interface ConnectionParams {
   server: string
@@ -19,7 +19,7 @@ export const useSetConnectionParams = () => {
   return context
 }
 
-export const ConnectionParamsProvider: FC = ({ children }) => {
+export const ConnectionParamsProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const [connectionParams, setConnectionParams] = useState<ConnectionParams | null>(null)
 
   return (

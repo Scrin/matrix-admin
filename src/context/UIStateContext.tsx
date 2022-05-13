@@ -1,4 +1,4 @@
-import { FC, useState, createContext, useContext } from "react"
+import { FC, useState, createContext, useContext, ReactElement } from "react"
 
 export interface UIState {
   userID: string
@@ -22,7 +22,7 @@ export const useUpdateUIState = () => {
   return context
 }
 
-export const UIStateProvider: FC = ({ children }) => {
+export const UIStateProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const [uiState, setUiState] = useState<UIState>(initialState)
 
   const updateUiState = (state: Partial<UIState>) => {
