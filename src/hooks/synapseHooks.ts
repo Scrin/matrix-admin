@@ -274,3 +274,28 @@ export const useRoomMembership = (userId: string) => {
     staleTime: 60000,
   })
 }
+
+export interface DeleteStatus {
+  status: string
+  shutdown_room: {
+    kicked_users: string[]
+    failed_to_kick_users: string[]
+    local_aliases: string[]
+    new_room_id: string | null
+  }
+}
+
+export const useDeleteStatus = (deleteId: string) => {
+  const apiClient = useApiClient()
+  return useQuery(["synapse-delete-status", deleteId], () => apiClient.get<DeleteStatus>(uri`/_synapse/admin/v2/rooms/delete_status/${deleteId}`), {
+    enabled: apiClient.configured && deleteId !== "",
+    staleTime: 1000,
+    refetchInterval: resp => (resp?.status === "shutting_down" || resp?.status === "purging" ? 500 : false),
+  })
+}
+
+export const useDeleteRoom = () => {
+  const apiClient = useApiClient()
+  return (roomId: string, block: boolean, purge: boolean) =>
+    apiClient.delete<{ delete_id: string }>(uri`/_synapse/admin/v2/rooms/${roomId}`, { block, purge }).then(resp => resp.delete_id)
+}
