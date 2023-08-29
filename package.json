@@ -16,7 +16,7 @@
     "eslint-import-resolver-typescript": "2.7.1",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.2.1",
-    "prettier": "2.7.1",
+    "prettier": "3.0.3",
     "react": "18.2.0",
     "react-cool-inview": "3.0.1",
     "react-dom": "18.2.0",
